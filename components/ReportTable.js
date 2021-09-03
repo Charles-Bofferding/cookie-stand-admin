@@ -1,21 +1,45 @@
 import React, {useState} from "react";
 
-function ReportTable(props) {
-
-  // These numbers defined by lab2 requirements
-  var hourly_sales = [48, 42, 30, 24, 42, 24, 36, 42, 42, 48, 36, 42, 24, 36];
-  const hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
-
-  const locationTotal = 0;
-
-  const overallTotal = 0;
+function ReportTable({stores, hours}) {
 
   const slightCheat = 516;
+
+  //create array of all of the sales total for the day of each store
+  const locationSales = stores.map(store => {
+    //map through the hourly sales of the store and create a running total
+    console.log(store);
+    let storeTotal = 0;
+     for (let index = 0; index < store.hourlySales.length; index++) {
+       storeTotal+= store.hourlySales[index];
+     }
+     return storeTotal;
+    //put that total into sales array
+  })
+  
+
+  //create array of all of the sales totals for each hour of the day
+  //also add in total of all of those numbers
+  const hourSales = [];
+
+  let totalTotal = 0;
+
+  for (let index = 0; index < hours.length; index++) {
+    let total = 0;
+    for (let j = 0; j < stores.length; j++) {
+      total += stores[j].hourlySales[index]; 
+    }
+    hourSales.push(total)
+    totalTotal += total;
+  }
+  hourSales.push(totalTotal);
+
+  console.log('location sales', locationSales);
+  console.log('hour sales', hourSales);
 
   return (
     <>
       {
-        props.stores.length == 0 ?
+        stores.length == 0 ?
           <h2>No Cookie Stands Available</h2>
           : 
           <table>
@@ -28,22 +52,21 @@ function ReportTable(props) {
             </tr>
     
             {
-              props.stores.map((store, idx) =>
+              stores.map((store, idx) =>
               <tr>
                 <td key={idx}>{store.location}</td>
-                {hourly_sales.map((sale, idx) =>
+                {store.hourlySales.map((sale, idx) =>
                   <td key={idx}>{sale}</td>
                 )}
-                <td>{slightCheat}</td>
+                <td>{locationSales[idx]}</td>
               </tr>
               )
             }
             <tr>
               <td>Totals</td>
-              {hourly_sales.map((sale, idx) =>
-                  <td key={idx}>{sale*props.stores.length}</td>
+              {hourSales.map((sale, idx) =>
+                  <td key={idx}>{sale}</td>
                 )}
-              <td>{slightCheat*props.stores.length}</td>
             </tr>
           </table>
       }
